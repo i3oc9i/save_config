@@ -1,20 +1,4 @@
-"""macOS configuration backup tool.
-
-RESTORE ON A NEW MACHINE:
-  1. Import GPG keys first (no decryption needed)
-     gpg --import dot.gnupg/secret-keys.asc
-     gpg --import dot.gnupg/public-keys.asc
-     gpg --import-ownertrust dot.gnupg/ownertrust.txt
-
-  2. Decrypt and extract tarballs
-     gpg -d dir.ssh.tgz.gpg | tar -xzf - -C ~
-     gpg -d dir.my.tgz.gpg | tar -xzf - -C ~
-     gpg -d dir.config.tgz.gpg | tar -xzf - -C ~
-     chmod 700 ~/.ssh && chmod 600 ~/.ssh/id_*
-
-  3. Decrypt other files
-     gpg -d dot.zsh_history.gpg > ~/.zsh_history
-"""
+"""macOS configuration backup tool."""
 
 from __future__ import annotations
 
@@ -65,7 +49,7 @@ HOME = Path.home()
 ICLOUD_BASE = HOME / "Library/Mobile Documents/com~apple~CloudDocs/My"
 
 DOTFILES = [
-    ".claude.json", ".direnvrc", ".fdignore", ".rgignore",
+    ".direnvrc", ".fdignore", ".rgignore",
     ".gitconfig", ".zsh_history", ".zsh_aliases", ".zshrc",
 ]
 ENCRYPTED_DOTFILES = {".zsh_history"}
@@ -218,7 +202,14 @@ def do_claude() -> bool:
     dest = BACKUP_DIR / "dot.claude"
     dest.mkdir(parents=True, exist_ok=True)
 
-    # Config files
+    # ~/.claude.json (lives in ~ not ~/.claude)
+    claude_json = HOME / ".claude.json"
+    if claude_json.is_file():
+        shutil.copy2(claude_json, dest / "dot.claude.json")
+    else:
+        print(f"  {Color.DIM}~/.claude.json not found, skipping{Color.RESET}")
+
+    # Config files inside ~/.claude/
     for cfg in ("CLAUDE.md", "settings.json", "keybindings.json"):
         p = src / cfg
         if p.is_file():
