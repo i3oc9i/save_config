@@ -465,7 +465,7 @@ def main(argv: list[str] | None = None) -> int:
     ENCRYPT = not args.no_encrypt
 
     timestamp = time.strftime("%Y.%m.%d-%H.%M.%S")
-    BACKUP_DIR = ICLOUD_BASE / f"my.Devices/Apple/Apple MacStudio/Configs/Home-{timestamp}"
+    BACKUP_DIR = ICLOUD_BASE / f"my.Devices/Apple/Apple Mac Studio/Configs/Home-{timestamp}"
     BACKUP_DIR.mkdir(parents=True, exist_ok=True)
 
     # Restrictive umask — all created files are owner-only

@@ -30,7 +30,7 @@ The module mirrors `../maintenance/maintenance.py` structure:
 - **TeeWriter** — ANSI-stripping log tee, identical to maintenance
 
 Key conventions:
-- Output directory: `~/Library/Mobile Documents/com~apple~CloudDocs/My/my.Devices/Apple/Apple MacStudio/Configs/Home-<timestamp>`
+- Output directory: `~/Library/Mobile Documents/com~apple~CloudDocs/My/my.Devices/Apple/Apple Mac Studio/Configs/Home-<timestamp>`
 - GPG recipient hardcoded to `i3oc9i@icloud.com`
 - Dotfiles renamed with `dot.` prefix (e.g., `.zshrc` → `dot.zshrc`)
 - Restore instructions are in the module docstring
