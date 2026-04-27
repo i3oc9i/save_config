@@ -43,7 +43,7 @@ save-config --all --log /tmp/save-config.log
 | `claude` | Copies `~/.claude.json`, `~/.claude/` settings, plugins, skills |
 | `agents` | Copies `~/.agents` directory |
 | `brew` | Saves Homebrew formula and cask lists |
-| `volta` | Saves Volta package list |
+| `mise` | Saves list of mise-installed tools |
 | `cargo` | Saves Cargo installed crates list |
 | `macos-apps` | Saves installed macOS applications list |
 
@@ -52,7 +52,7 @@ save-config --all --log /tmp/save-config.log
 | Alias | Expands to |
 |---|---|
 | `encrypted` | `ssh,my,config` |
-| `packages` | `brew,volta,cargo,macos-apps` |
+| `packages` | `brew,mise,cargo,macos-apps` |
 
 ## Restore
 

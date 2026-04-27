@@ -26,7 +26,7 @@ The module mirrors `../maintenance/maintenance.py` structure:
 - **Helpers** — `encrypt_to_dest()` and `tar_encrypt()` handle the encrypt-in-/tmp-then-move pattern so unencrypted data never touches iCloud
 - **12 section functions** (`do_*`) — each returns `bool`, registered in `SECTIONS` list
 - **Registry + dispatcher** — `SECTIONS` list of `(id, label, fn)` tuples; `run_section()` handles filtering, confirmation prompts, timing, and error catching
-- **Section aliases** — `packages` (brew, volta, cargo, macos-apps), `encrypted` (ssh, my, config)
+- **Section aliases** — `packages` (brew, mise, cargo, macos-apps), `encrypted` (ssh, my, config)
 - **TeeWriter** — ANSI-stripping log tee, identical to maintenance
 
 Key conventions:

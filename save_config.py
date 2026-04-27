@@ -273,11 +273,11 @@ def do_brew() -> bool:
     return True
 
 
-def do_volta() -> bool:
-    if not require_cmd("volta", "Volta"):
+def do_mise() -> bool:
+    if not require_cmd("mise", "Mise"):
         return False
-    result = run(["volta", "list", "all"], capture_output=True, text=True)
-    (BACKUP_DIR / "volta-packages.txt").write_text(result.stdout)
+    result = run(["mise", "ls", "--installed"], capture_output=True, text=True)
+    (BACKUP_DIR / "mise-tools.txt").write_text(result.stdout)
     return True
 
 
@@ -323,13 +323,13 @@ SECTIONS: list[tuple[str, str, Callable[[], bool]]] = [
     ("claude", "Claude Code (~/.claude)", do_claude),
     ("agents", "Agents (~/.agents)", do_agents),
     ("brew", "Homebrew Packages", do_brew),
-    ("volta", "Volta Packages", do_volta),
+    ("mise", "Mise Tools", do_mise),
     ("cargo", "Cargo Packages", do_cargo),
     ("macos-apps", "macOS Applications", do_macos_apps),
 ]
 
 SECTION_ALIASES = {
-    "packages": ["brew", "volta", "cargo", "macos-apps"],
+    "packages": ["brew", "mise", "cargo", "macos-apps"],
     "encrypted": ["ssh", "my", "config"],
 }
 
