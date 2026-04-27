@@ -28,7 +28,13 @@ save-config --all --no-encrypt
 # Log output to file (ANSI codes stripped in log)
 save-config --all --log
 save-config --all --log /tmp/save-config.log
+
+# Override the backup destination (parent of Home-<timestamp>)
+save-config --all --backup-dir /Volumes/Backup/Configs
+SAVE_CONFIG_BACKUP_DIR=/Volumes/Backup/Configs save-config --all
 ```
+
+The default destination is `~/Library/Mobile Documents/com~apple~CloudDocs/My/my.Devices/Apple/Apple Mac Studio/Configs`. The `--backup-dir` flag wins over `SAVE_CONFIG_BACKUP_DIR`, which wins over the default. A timestamped `Home-<timestamp>` subdirectory is always appended.
 
 ## Sections
 

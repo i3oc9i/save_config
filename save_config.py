@@ -47,6 +47,8 @@ class SectionResult:
 GPG_RECIPIENT = "i3oc9i@icloud.com"
 HOME = Path.home()
 ICLOUD_BASE = HOME / "Library/Mobile Documents/com~apple~CloudDocs/My"
+DEFAULT_BACKUP_PARENT = ICLOUD_BASE / "my.Devices/Apple/Apple Mac Studio/Configs"
+ENV_BACKUP_DIR = "SAVE_CONFIG_BACKUP_DIR"
 
 DOTFILES = [
     ".direnvrc", ".fdignore", ".rgignore",
@@ -60,6 +62,13 @@ ENCRYPT: bool = True
 
 
 # ------------------------------------------------------------------- Helpers
+def resolve_backup_parent(cli_value: str | None) -> Path:
+    raw = cli_value or os.environ.get(ENV_BACKUP_DIR)
+    if raw:
+        return Path(raw).expanduser()
+    return DEFAULT_BACKUP_PARENT
+
+
 def format_duration(secs: float) -> str:
     s = int(secs)
     if s < 60:
@@ -477,6 +486,11 @@ def main(argv: list[str] | None = None) -> int:
         "--log", nargs="?", const=True, default=None, metavar="PATH",
         help="Tee output to log file (default: ~/save-config-<timestamp>.log)",
     )
+    parser.add_argument(
+        "--backup-dir", dest="backup_dir", metavar="PATH", default=None,
+        help=f"Parent directory for the timestamped backup folder. "
+             f"Overrides ${ENV_BACKUP_DIR}. Default: {DEFAULT_BACKUP_PARENT}",
+    )
     parser.add_argument("--version", action="version", version=f"save-config v{version()}")
 
     args = parser.parse_args(argv)
@@ -498,7 +512,8 @@ def main(argv: list[str] | None = None) -> int:
     ENCRYPT = not args.no_encrypt
 
     timestamp = time.strftime("%Y.%m.%d-%H.%M.%S")
-    BACKUP_DIR = ICLOUD_BASE / f"my.Devices/Apple/Apple Mac Studio/Configs/Home-{timestamp}"
+    backup_parent = resolve_backup_parent(args.backup_dir)
+    BACKUP_DIR = backup_parent / f"Home-{timestamp}"
     BACKUP_DIR.mkdir(parents=True, exist_ok=True)
 
     # Restrictive umask — all created files are owner-only
