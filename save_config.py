@@ -112,7 +112,7 @@ def tar_encrypt(name: str, base: Path, includes: list[str], dest: Path, *, exclu
     for exc in excludes or []:
         cmd.extend(["--exclude", exc])
     cmd.extend(includes)
-    run(cmd, check=True)
+    run(cmd, check=True, env={**os.environ, "COPYFILE_DISABLE": "1"})
     encrypt_to_dest(tmp_tar, dest)
     tmp_tar.unlink(missing_ok=True)
 
@@ -263,6 +263,38 @@ def do_agents() -> bool:
     return True
 
 
+def do_vscode() -> bool:
+    """VS Code + VS Code Insiders: extension list (plain) and User dir (encrypted)."""
+    base = HOME / "Library/Application Support"
+    variants = [
+        ("code", "Code", "vscode"),
+        ("code-insiders", "Code - Insiders", "vscode-insiders"),
+    ]
+    found_any = False
+    for cli, app_dir, prefix in variants:
+        if shutil.which(cli) is None:
+            print(f"  {Color.DIM}'{cli}' not found, skipping{Color.RESET}")
+            continue
+        found_any = True
+        result = run([cli, "--list-extensions", "--show-versions"], capture_output=True, text=True)
+        (BACKUP_DIR / f"{prefix}-extensions.txt").write_text(result.stdout)
+
+        user_dir = base / app_dir / "User"
+        if user_dir.is_dir():
+            tar_encrypt(
+                f"dir.{prefix}-user",
+                base / app_dir,
+                ["User"],
+                BACKUP_DIR,
+                excludes=["User/globalStorage", "User/History", "User/workspaceStorage", "User/sync"],
+            )
+        else:
+            print(f"  {Color.DIM}{user_dir} not found, skipping settings{Color.RESET}")
+    if not found_any:
+        print(f"  {Color.DIM}Neither VS Code nor VS Code Insiders found{Color.RESET}")
+    return True
+
+
 def do_brew() -> bool:
     if not require_cmd("brew", "Homebrew"):
         return False
@@ -322,6 +354,7 @@ SECTIONS: list[tuple[str, str, Callable[[], bool]]] = [
     ("dotfiles", "Dotfiles", do_dotfiles),
     ("claude", "Claude Code (~/.claude)", do_claude),
     ("agents", "Agents (~/.agents)", do_agents),
+    ("vscode", "VS Code Extensions & Settings", do_vscode),
     ("brew", "Homebrew Packages", do_brew),
     ("mise", "Mise Tools", do_mise),
     ("cargo", "Cargo Packages", do_cargo),
